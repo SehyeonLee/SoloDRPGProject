@@ -39,9 +39,8 @@ public class Entity : MonoBehaviour
     protected void CalcLookDir()//회전값 얻기
     {
         Dir = (int)(transform.rotation.eulerAngles.y/90);
-        Debug.Log(transform.rotation.eulerAngles.y);
     }
-    protected void Turn()//돌기ㅇㅇ
+    protected void Turn()//Dir값으로 돌기ㅇㅇ
     {
         transform.rotation = Quaternion.Euler(0,GetLookDir(),0);
     }
