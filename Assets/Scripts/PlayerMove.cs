@@ -42,9 +42,9 @@ public class PlayerMove : Entity
                 tx--;
                 break;
         }
-        if(RoomManager.IsValuableSpot(tx,ty) ==false)
+        if(RoomManager.IsValuableSpot(tx,ty,f) ==false)
             return;
-        GameObject TargetRoom = RoomManager.GetRoom(tx,ty);
+        GameObject TargetRoom = RoomManager.GetRoom(tx,ty,f);
         if(TargetRoom.GetComponent<Room>().GetIsMob())
         {
             Destroy(TargetRoom.GetComponent<Room>().GetStay());

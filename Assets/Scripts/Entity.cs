@@ -11,10 +11,10 @@ public class Entity : MonoBehaviour
     {
         StayRoom = Where;
     }
-    protected int x,y;//내 좌표
+    protected int x,y,f;//내 좌표
     public Vector2 GetXY()//내 좌표 포장해서 배출
     {
-        return new Vector2(x,y);
+        return new Vector3(x,y,f);
     }
     protected int Dir = 0;//보는 방향, 0앞 1오 2뒤 3왼
     public void TurnLeft()//좌로 돌아
@@ -45,12 +45,12 @@ public class Entity : MonoBehaviour
         transform.rotation = Quaternion.Euler(0,GetLookDir(),0);
     }
     protected bool[] CanGo = {true,false,false,false};//갈 수 있는지 판별
-    public void UpdateCanGo(bool[] UpBool,int nx,int ny)//방에 들가서 정보 얻기
+    public void UpdateCanGo(bool[] UpBool,int nx,int ny, int nf)//방에 들가서 정보 얻기
     {
-        Debug.Log(gameObject);
         CanGo = UpBool;
         x=nx;
         y=ny;
+        f = nf;
     }
     void Start()
     {

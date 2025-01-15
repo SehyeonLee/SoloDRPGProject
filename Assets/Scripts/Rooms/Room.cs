@@ -5,15 +5,15 @@ using UnityEngine;
 
 public class Room : MonoBehaviour
 {
-    public int x,y;//매니저에 신고할 자기 좌표
+    public int x,y,f;//매니저에 신고할 자기 좌표
     public bool[] Passage= {false,false,false,false};//앞 오 뒤 왼, 길이 있냐.
-    bool[] CanMove = {false,false,false,false};//앞 오 뒤 왼, 갈 수 있을지 반환
-    GameObject[] NeiRooms = new GameObject[4];//이웃 방들
+    protected bool[] CanMove = {false,false,false,false};//앞 오 뒤 왼, 갈 수 있을지 반환
+    protected GameObject[] NeiRooms = new GameObject[4];//이웃 방들
     public void SetRoom(int i,GameObject GObj)//입주신고
     {
         NeiRooms[i] = GObj;
     }
-    bool IsMob = false;//나 몹 갖고있니
+    protected bool IsMob = false;//나 몹 갖고있니
     public void SetIsMob(bool How)//갖고 있을지 세팅
     {
         IsMob = How;
@@ -22,9 +22,9 @@ public class Room : MonoBehaviour
     {
         return IsMob;
     }
-    RoomManager Manager;//매니저님 연락처
-    MonsterManager MManager; //옆집 매니저 연락처
-    GameObject Stay;//이 방에 있는 몹/플레이어(아직은 그 둘)
+    protected RoomManager Manager;//매니저님 연락처
+    protected MonsterManager MManager; //옆집 매니저 연락처
+    protected GameObject Stay;//이 방에 있는 몹/플레이어(아직은 그 둘)
     public void SetStay(GameObject Who)//누가 있는지 세팅
     {
         Stay = Who;
@@ -33,7 +33,7 @@ public class Room : MonoBehaviour
     {
         return Stay;
     }
-    bool IsLocked = false; //잠긴방 구현
+    protected bool IsLocked = false; //잠긴방 구현
     public bool StartLock = false; //게임 시작시 잠긴방 세팅팅
     public void SetIsLocked(bool How) //잠겼나 세팅
     {
@@ -49,7 +49,7 @@ public class Room : MonoBehaviour
         IsLocked = StartLock; //시작시 잠겨야함 잠그기기
         Manager = GameObject.FindGameObjectWithTag("RoomManager").GetComponent<RoomManager>();//매니저님 컨택
         MManager = GameObject.FindGameObjectWithTag("MonsterManager").GetComponent<MonsterManager>();//매니저님 컨택
-        Manager.SetRoom(gameObject,x,y);//입주신고
+        Manager.SetRoom(gameObject,x,y,f);//입주신고
         CanMove = Passage; //길 파악
         StartCoroutine("Search");//이웃 파악
         
@@ -85,11 +85,11 @@ public class Room : MonoBehaviour
                 NeiRooms[i].GetComponent<Room>().StateUpdate();
             }
     }
-    private void OnTriggerEnter(Collider other) {
+    protected void OnTriggerEnter(Collider other) {
         if(other.gameObject.tag=="Player")
         {
             StateUpdate();//주변 상황 체크
-            other.gameObject.GetComponent<Entity>().UpdateCanGo(CanMove,x,y);//플레이어한테 이동 가능 방향과 주소 알려주기
+            other.gameObject.GetComponent<Entity>().UpdateCanGo(CanMove,x,y,f);//플레이어한테 이동 가능 방향과 주소 알려주기
             other.gameObject.GetComponent<Entity>().SetStayRoom(GetComponent<Room>());//주소 알려주기+
             SetStay(other.gameObject);//나 플레이어 왔다고 기록
             MManager.CallFind();//몬스터 업데이트
@@ -97,13 +97,13 @@ public class Room : MonoBehaviour
         if(other.gameObject.tag=="Monster")
         {
             IsMob=true;//나 몹 있음 체크
-            other.gameObject.GetComponent<Entity>().UpdateCanGo(CanMove,x,y);//몹한테 이동 가능 방향과 주소 알려주기
+            other.gameObject.GetComponent<Entity>().UpdateCanGo(CanMove,x,y,f);//몹한테 이동 가능 방향과 주소 알려주기
             other.gameObject.GetComponent<Entity>().SetStayRoom(GetComponent<Room>());//몹한테 주소 알려주기
             SetStay(other.gameObject);//나 몹 갖고 있다고 기록
             CallNeiUpdate();//업뎃 있어요!
         }
     }
-    private void OnTriggerExit(Collider other) 
+    protected void OnTriggerExit(Collider other) 
     {
         if(other.gameObject.tag=="Monster")
         {
@@ -116,7 +116,7 @@ public class Room : MonoBehaviour
     {
         for(int i =0;i<10;i++)//다른방 신고 기다리기
             yield return null;
-        Manager.GetNei(GetComponent<Room>(),x,y);//매니저님 나 이웃 있어요?
+        Manager.GetNei(GetComponent<Room>(),x,y,f);//매니저님 나 이웃 있어요?
         StateUpdate();//이웃 찾았으니 업뎃
     }
 }
